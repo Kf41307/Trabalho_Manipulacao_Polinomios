@@ -17,32 +17,69 @@ void inicializar(Polinomio &lista){
     lista.ultimo=NULL;
 }
 
+bool buscarExpoente(Polinomio lista, int expoente){
+    No* atual = lista.primeiro;
+
+    while(atual != NULL){
+        if(atual->expoente == expoente) return true;
+        atual = atual->proximo;
+    }
+
+    return false;
+}
+
+bool somarMonomios(Polinomio &lista, float coefNum, int expoente){
+    No* atual = lista.primeiro;
+    
+    while(atual != NULL){
+        if(expoente == atual->expoente){ //Encontra onde está esse expoente
+                float total; 
+                total = atual->coefNum + coefNum; //Soma os coeficientes do monômio que está sendo adicionado com o que já está no polinômio e o expoente não muda
+                atual->coefNum = total;   
+                 
+                return true;
+        }
+        atual = atual->proximo;
+    }
+    return false;
+}
+
 bool inserirFinal(Polinomio &lista, float coefNum, int expoente){
-    No *novoMonomio = new No;
-    
-    novoMonomio->proximo = NULL;
-    novoMonomio->coefNum = coefNum;
-    novoMonomio->expoente = expoente;
-    
     if(lista.primeiro == NULL){ //Caso a lista não tenha nenhum elemento
+        No *novoMonomio = new No;
+    
+        novoMonomio->proximo = NULL;
+        novoMonomio->coefNum = coefNum;
+        novoMonomio->expoente = expoente;
+        
         lista.primeiro = novoMonomio;
         lista.ultimo = novoMonomio;
         return true;
+    }else if(buscarExpoente(lista, expoente)){ //Se ja tiver algum monomio de mesmo expoente do que esta sendo adicionado
+        return somarMonomios(lista, coefNum, expoente);
     }else{ //Se ja tiver algum elemento coloca depois de onde o ponteiro ultimo aponta e aponta o antigo ultimo para o novo ultimo
-        lista.ultimo->proximo = novoMonomio;
-        lista.ultimo = novoMonomio;
+        No *novoMonomio = new No;
+    
+        novoMonomio->proximo = NULL;
+        novoMonomio->coefNum = coefNum;
+        novoMonomio->expoente = expoente;
+        
+        lista.ultimo->proximo = novoMonomio; //Antigo lista ultimo passa a apontar para o novo ultimo
+        lista.ultimo = novoMonomio; //Coloca o novo ultimo como sendo ultimo
         return true;
     }
     return false;
 }
 
-bool inserirOrdem(Polinomio &lista, float coefNum, int expoente){ //Falta adicionar o caso de inserir monomio de mesmo grau
+bool inserirOrdem(Polinomio &lista, float coefNum, int expoente){
     No* atual = lista.primeiro;
     No* anterior = NULL;
     
 
     if(lista.primeiro == NULL){ // Se a lista nao tiver nenhum elemento
         return inserirFinal(lista, coefNum, expoente);
+    }else if(buscarExpoente(lista, expoente)){ //Se já tiver algum monômio de mesmo expoente do que está sendo adicionado
+        return somarMonomios(lista, coefNum, expoente);
     }else if((expoente > lista.primeiro->expoente)){ //Se o expoente do adicionado for maior que o primeiro
         No* novoMonomio = new No;
 
@@ -56,8 +93,9 @@ bool inserirOrdem(Polinomio &lista, float coefNum, int expoente){ //Falta adicio
     }else if(expoente < lista.ultimo->expoente){ // Se o expoente for menor que o ultimo coloca ele no final
             return inserirFinal(lista, coefNum, expoente);
     }else{ //Se nao entrou em nenhuma das condições acima significa que a inserção será no meio de dois elementos
+        atual = lista.primeiro;
         while(atual != NULL){
-            if((expoente < anterior->expoente) && (expoente > atual->expoente)){
+            if((anterior != NULL) && (expoente < anterior->expoente) && (expoente > atual->expoente)){
                 No* novoMonomio = new No;
             
                 novoMonomio->expoente = expoente;
@@ -66,12 +104,9 @@ bool inserirOrdem(Polinomio &lista, float coefNum, int expoente){ //Falta adicio
                 anterior->proximo = novoMonomio;
                 novoMonomio->proximo = atual;
                 return true;
-            }else if(expoente == atual->expoente){
-                // funcao SOMAR(atual.coef, coefNum) coefNum do expoente
             }
-
-            anterior = atual;
-            atual = atual->proximo;
+        anterior = atual;
+        atual = atual->proximo;
         }
     }
     return false;
@@ -105,34 +140,53 @@ bool removerMonomio(Polinomio &lista, int expoente){
     return false;
 }
 
-bool buscarExpoente(Polinomio lista, int expoente){
-    No* atual = lista.primeiro;
-
-    while(atual != NULL){
-        if(atual->expoente == expoente) return true;
-        atual = atual->proximo;
+void imprimirPolinomio(Polinomio lista){
+    if(lista.primeiro == NULL){
+        cout<<"0";
+        return;
     }
 
-    return false;
-}
-
-void imprimirPolinomio(Polinomio lista){ //Falta espaco no exp == 0 e coef < 0 antes do numero
     No* atual = lista.primeiro;
 
-    while(atual != NULL){
-        if((atual == lista.primeiro) && (atual->coefNum > 0)){
-            cout<<atual->coefNum<<"x^"<<atual->expoente<<" ";
-        }else if((atual->expoente == 0) && atual->coefNum > 0){
-            cout<<"+ "<<atual->coefNum<<" ";
-        }else if(atual->expoente == 0){
-            cout<<atual->coefNum<<" ";
-        }else if(atual->expoente == 1){
-            cout<<atual->coefNum<<"x"<<" ";
-        }else if(atual->coefNum > 0){
-            cout<<"+ "<<atual->coefNum<<"x^"<<atual->expoente<<" ";
-        }else{
-            cout<<atual->coefNum<<"x^"<<atual->expoente<<" ";
+
+    while(atual != NULL){        
+        if(atual != lista.primeiro && atual->coefNum > 0){
+            cout<<"+ ";
         }
+
+        if(atual->expoente == 0){
+            cout<<atual->coefNum;
+        }else if(atual->expoente == 1){
+            if(atual->coefNum == 1) cout<<"x";
+            else if(atual->coefNum == -1) cout<<"-x";
+            else cout<<atual->coefNum<<"x";
+        }else{
+            if(atual->coefNum == 1) cout<<"x^"<<atual->expoente;
+            else if(atual->coefNum == -1) cout<<"-x^"<<atual->expoente;
+            else cout<<atual->coefNum<<"x^"<<atual->expoente;
+        }
+
+        cout<<" ";
+
+       
+       
+        // if((atual == lista.primeiro) && (atual->coefNum > 0)){
+        //     cout<<atual->coefNum<<"x^"<<atual->expoente<<" ";
+        // }else if((atual->expoente == 0) && atual->coefNum > 0){
+        //     cout<<"+ "<<atual->coefNum<<" ";
+        // }else if(atual->expoente == 0){
+        //     cout<<atual->coefNum<<" ";
+        // }else if(atual->expoente == 1){
+        //     cout<<atual->coefNum<<"x"<<" ";
+        // }else if(atual->coefNum > 0){
+        //     cout<<"+ "<<atual->coefNum<<"x^"<<atual->expoente<<" ";
+        // }else if(atual->coefNum == 1){
+        //     cout<<"x^"<<atual->expoente<<" ";
+        // }else if(atual->coefNum == -1){
+
+        // }else{
+        //     cout<<atual->coefNum<<"x^"<<atual->expoente<<" ";
+        // }
 
         atual = atual->proximo;
     }
@@ -156,7 +210,7 @@ Polinomio somarPolinomios(Polinomio lista1, Polinomio lista2){
                 float somaCoef = atual1->coefNum + atual2->coefNum;
 
                 if(somaCoef != 0){
-                    inserirOrdem(soma, somaCoef, atual1->expoente); //(5x^4 + 2x) +  2x^4 + x^2 =  7x^4 + 2x + x^2
+                    inserirOrdem(soma, somaCoef, atual1->expoente);
                 }
                 jaSomou = true;
             }
@@ -217,12 +271,12 @@ Polinomio multiplicarPolinomios(Polinomio lista1, Polinomio lista2){
             float multCoef = atual1->coefNum * atual2->coefNum;
 
             inserirOrdem(multiplicacao, multCoef, somaExp);
+
+            atual2 = atual2->proximo;
         }
         
         atual1 = atual1->proximo;
     }
-
-    //somarMonomiosMesmoGrau
     return multiplicacao;
 }   
 
@@ -255,3 +309,5 @@ void liberar(Polinomio &lista){
     }
     inicializar(lista);
 }
+
+//Menu, usuario colocar monomios input em um while no main, validações input, chamadas dependendo da operação, melhorar a funcao de imprimir e verificar logicas das funcoes   

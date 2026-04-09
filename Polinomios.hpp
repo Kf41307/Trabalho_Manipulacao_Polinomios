@@ -1,3 +1,7 @@
+//Trabalho: Manipulação de Polinômios 
+//Disciplina: Estrutura de Dados - Professor: Marcos Cesar Cardoso Carrard
+//Autores: Guilherme Krieger Ferreira, Thifany Ribeiro Rodrigues
+
 #include <iostream>
 using namespace std;
 
@@ -167,27 +171,6 @@ void imprimirPolinomio(Polinomio lista){
         }
 
         cout<<" ";
-
-       
-       
-        // if((atual == lista.primeiro) && (atual->coefNum > 0)){
-        //     cout<<atual->coefNum<<"x^"<<atual->expoente<<" ";
-        // }else if((atual->expoente == 0) && atual->coefNum > 0){
-        //     cout<<"+ "<<atual->coefNum<<" ";
-        // }else if(atual->expoente == 0){
-        //     cout<<atual->coefNum<<" ";
-        // }else if(atual->expoente == 1){
-        //     cout<<atual->coefNum<<"x"<<" ";
-        // }else if(atual->coefNum > 0){
-        //     cout<<"+ "<<atual->coefNum<<"x^"<<atual->expoente<<" ";
-        // }else if(atual->coefNum == 1){
-        //     cout<<"x^"<<atual->expoente<<" ";
-        // }else if(atual->coefNum == -1){
-
-        // }else{
-        //     cout<<atual->coefNum<<"x^"<<atual->expoente<<" ";
-        // }
-
         atual = atual->proximo;
     }
 }
@@ -309,5 +292,3 @@ void liberar(Polinomio &lista){
     }
     inicializar(lista);
 }
-
-//Menu, usuario colocar monomios input em um while no main, validações input, chamadas dependendo da operação, melhorar a funcao de imprimir e verificar logicas das funcoes   

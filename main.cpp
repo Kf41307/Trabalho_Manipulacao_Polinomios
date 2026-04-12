@@ -77,9 +77,26 @@ int main(){
                     cout<<endl<<"Coeficiente para adicionar no polinômio 1 (0 para parar): ";
                     cin>>coef;
 
-                    if(coef != 0){
-                        cout<<"Expoente para adicionar no polinômio 1: ";
-                        cin>>exp;
+                    if(cin.fail()){ // Garantindo que digitou um número
+                        cin.clear();
+                        cin.ignore(1000, '\n');
+                        cout<<"Entrada inválida, digite um número."<<endl;
+                        coef = 1; //Se nao digitou volta o loop denovo
+                    }else if(coef != 0){
+                        bool inputInvalido;
+                        do{
+                            cout<<"Expoente para adicionar no polinômio 1: ";
+                            cin>>exp;
+                        
+                            inputInvalido = exp < 0 || cin.fail();
+
+                            if(inputInvalido){
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                cout<<"Entrada inválida, digite um número positivo."<<endl;
+                            }
+                        }while(inputInvalido);
+
                         inserirOrdem(polinomio1, coef, exp);
                     }
                 }while(coef != 0);
@@ -90,9 +107,26 @@ int main(){
                     cout<<endl<<"Coeficiente para adicionar no polinômio 2 (0 para parar): ";
                     cin>>coef;
 
-                    if(coef != 0){
-                        cout<<"Expoente para adicionar no polinômio 2: ";
-                        cin>>exp;
+                    if(cin.fail()){ // Garantindo que digitou um número
+                        cin.clear();
+                        cin.ignore(1000, '\n');
+                        cout<<"Entrada inválida, digite um número."<<endl;
+                        coef = 1; //Se nao digitou volta o loop denovo
+                    }else if(coef != 0){
+                        bool inputInvalido;
+                        do{
+                            cout<<"Expoente para adicionar no polinômio 2: ";
+                            cin>>exp;
+                        
+                            inputInvalido = exp < 0 || cin.fail();
+
+                            if(inputInvalido){
+                                cin.clear();
+                                cin.ignore(1000, '\n');
+                                cout<<"Entrada inválida, digite um número positivo."<<endl;
+                            }
+                        }while(inputInvalido);
+
                         inserirOrdem(polinomio2, coef, exp);
                     }
                 }while(coef != 0);
